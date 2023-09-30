@@ -1,0 +1,17 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  hoyoapi:
+    specifier: ^1.2.0
+    version: 1.2.0
+
+packages:
+
+  /hoyoapi@1.2.0:
+    resolution: {integrity: sha512-mjErQ9TELN+XV2wLkqaf37thQX9vQTfjPFDeGRKjU84G4vT6Ufjz9sgYIB9aK5PZebfLIhAnDO4yRLLOqAr0lQ==}
+    engines: {node: '>=8.17'}
+    dev: false
