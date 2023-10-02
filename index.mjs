@@ -1,6 +1,7 @@
 import {HonkaiStarRail, GenshinImpact, LanguageEnum} from 'hoyoapi'
+import 'dotenv/config'
 
-const cookie = 'G_AUTHUSER_H=1; _MHYUUID=1172459a-ced7-497f-817c-d61d587297cc; mi18nLang=en-us; G_ENABLED_IDPS=google; DEVICEFP_SEED_ID=9deb4da0378d144b; DEVICEFP_SEED_TIME=1691786087000; DEVICEFP=38d7ee6f94c31; ltoken=J9VE48CDHOp6l4sR4xiH81LaxVwELmx8pHB40GLK; ltuid=237933731; cookie_token=cJnk4Qb4ig5h4bQbYJHja3TZiBwME4t0Z5e8U5MQ; account_id=237933731; amp_adc4c4=DIldbfK2zy77UWihL7EY5Y.NGNlUG0yVjhLM1Z4S0dsdGdjdzBtSjlUcUZpMg==..1h7j4u2hv.1h7j4vkj0.0.4.4'
+const cookie = process.env.COOKIE
 const hsr = new HonkaiStarRail({
   cookie,
   lang: LanguageEnum.ENGLISH, // optional
@@ -21,7 +22,7 @@ apps.forEach(async ({name, app}) => {
       const {info, status} = dailyClaim
 
       if (status === 'OK') {
-        console.log('Reward claimed successfully')
+        console.log(`${name} reward claimed successfully`)
         return
       }
 
