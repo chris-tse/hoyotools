@@ -5,12 +5,12 @@ const cookie = process.env.COOKIE
 const hsr = new HonkaiStarRail({
   cookie,
   lang: LanguageEnum.ENGLISH, // optional
-  uid: 600_250_848,
+  uid: process.env.HSR_UID,
 })
 const genshin = new GenshinImpact({
   cookie,
   lang: LanguageEnum.ENGLISH,
-  uid: 652_041_600
+  uid: process.env.GENSHIN_UID
 })
 
 const apps = [{name: 'hsr', app: hsr}, {name: 'genshin', app: genshin}]
@@ -22,13 +22,13 @@ apps.forEach(async ({name, app}) => {
       const {info, status} = dailyClaim
 
       if (status === 'OK') {
-        console.log(`${name} reward claimed successfully`)
+        console.log(`${name} reward claimed successfully`)``
         return
       }
 
       console.log(status)
       console.log(`You have claimed ${info.total_sign_day} rewards this month.`)
-    }).catch(() => {
+    }).catch(e => {
       console.error(e)
     })
 
