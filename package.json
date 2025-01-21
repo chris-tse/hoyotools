@@ -1,17 +1,18 @@
 {
-  "name": "hoyo",
+  "name": "hoyo-daily-claimer",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple cron script to fetch daily rewards for Genshin Impact and Honkai: Star Rail.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "node index.mjs"
+    "collect": "node index.mjs",
+    "collect:now": "GET_REWARDS_NOW=true pnpm collect"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "hoyoapi": "^1.2.0",
     "node-cron": "^3.0.3"
   }

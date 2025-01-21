@@ -1,4 +1,4 @@
-import {HonkaiStarRail, GenshinImpact, LanguageEnum} from 'hoyoapi'
+import {HonkaiStarRail, GenshinImpact, HonkaiImpact, LanguageEnum} from 'hoyoapi'
 import 'dotenv/config'
 import {schedule} from "node-cron";
 
@@ -13,32 +13,56 @@ const genshin = new GenshinImpact({
   lang: LanguageEnum.ENGLISH,
   uid: process.env.GENSHIN_UID
 })
+const hi3 = new HonkaiImpact({
+  cookie,
+  lang: LanguageEnum.ENGLISH,
+  uid: process.env.HI3_UID
+})
 
-const apps = [{name: 'hsr', app: hsr}, {name: 'genshin', app: genshin}]
+const apps = [{name: 'hsr', app: hsr}, {name: 'genshin', app: genshin}, {name: 'hi3', app: hi3}]
 
-function getDailyRewards() {
-  apps.forEach(async ({name, app}) => {
-    try {
-      console.log(`Attempting to claim ${name} reward...`)
-      app.daily.claim().then(dailyClaim => {
-        const {info, status} = dailyClaim
-
-        if (status === 'OK') {
-          console.log(`${name} reward claimed successfully`)
-        }
-
-        console.log(status)
-        console.log(`${name}: You have claimed ${info.total_sign_day} rewards this month.`)
-      }).catch(e => {
-        console.error(e)
-      })
-
-    } catch (e) {
-      console.log(e.message)
-    }
-
-  })
+function formatTimestamp () {
+  const now = new Date()
+  return now.toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).replace(/(\d+)\/(\d+)\/(\d+)/, '$3/$1/$2')
 }
 
-schedule('0 0 * * *', getDailyRewards)
+async function getDailyRewards() {
+  console.log(`\n[${formatTimestamp()}] 🎯 Starting daily rewards collection...\n`)
+
+  await Promise.all(apps.map(async ({name, app}) => {
+    const prefix = `[${name}]`.padEnd(10)
+
+    console.log(`${prefix} ⏳ Attempting to claim reward...`)
+    try {
+      const dailyClaim = await app.daily.claim()
+      const {info, status} = dailyClaim
+
+      if (status === 'OK') {
+        console.log(`${prefix} ✅ Successfully claimed reward`)
+        console.log(`${prefix} 📊 Total rewards this month: ${info.total_sign_day}`)
+      } else {
+        console.log(`${prefix} ⚠️  Claim status: ${status}`)
+      }
+    } catch (e) {
+      console.log(`${prefix} ❌ Error: ${e.message}`)
+    }
+    console.log('') // Add spacing between apps
+  }))
+
+  console.log(`[${formatTimestamp()}] ✨ Daily rewards collection completed\n`)
+}
+
+
+if (process.env.GET_REWARDS_NOW === 'true') {
+    void getDailyRewards()
+}
+
+schedule('0 11 * * *', getDailyRewards)
 

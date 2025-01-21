@@ -1,40 +1,49 @@
-lockfileVersion: '6.0'
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
-  dotenv:
-    specifier: ^16.4.5
-    version: 16.4.5
-  hoyoapi:
-    specifier: ^1.2.0
-    version: 1.2.0
-  node-cron:
-    specifier: ^3.0.3
-    version: 3.0.3
+importers:
+
+  .:
+    dependencies:
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
+      hoyoapi:
+        specifier: ^1.2.0
+        version: 1.2.0
+      node-cron:
+        specifier: ^3.0.3
+        version: 3.0.3
 
 packages:
 
-  /dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
-    dev: false
 
-  /hoyoapi@1.2.0:
+  hoyoapi@1.2.0:
     resolution: {integrity: sha512-mjErQ9TELN+XV2wLkqaf37thQX9vQTfjPFDeGRKjU84G4vT6Ufjz9sgYIB9aK5PZebfLIhAnDO4yRLLOqAr0lQ==}
     engines: {node: '>=8.17'}
-    dev: false
 
-  /node-cron@3.0.3:
+  node-cron@3.0.3:
     resolution: {integrity: sha512-dOal67//nohNgYWb+nWmg5dkFdIwDm8EpeGYMekPMrngV3637lqnX0lbUcCtgibHTz6SEz7DAIjKvKDFYCnO1A==}
     engines: {node: '>=6.0.0'}
-    dependencies:
-      uuid: 8.3.2
-    dev: false
 
-  /uuid@8.3.2:
+  uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
-    dev: false
+
+snapshots:
+
+  dotenv@16.4.7: {}
+
+  hoyoapi@1.2.0: {}
+
+  node-cron@3.0.3:
+    dependencies:
+      uuid: 8.3.2
+
+  uuid@8.3.2: {}
