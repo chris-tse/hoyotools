@@ -1,6 +1,11 @@
 import {HonkaiStarRail, GenshinImpact, HonkaiImpact, LanguageEnum} from 'hoyoapi'
 import 'dotenv/config'
 import {schedule} from "node-cron";
+import {Axiom} from "@axiomhq/js";
+
+const axiom = process.env.AXIOM_TOKEN
+  ? new Axiom({ token: process.env.AXIOM_TOKEN })
+  : null;
 
 const cookie = process.env.COOKIE
 const hsr = new HonkaiStarRail({
@@ -36,7 +41,7 @@ function formatTimestamp () {
 async function getDailyRewards() {
   console.log(`\n[${formatTimestamp()}] 🎯 Starting daily rewards collection...\n`)
 
-  await Promise.all(apps.map(async ({name, app}) => {
+  const results = await Promise.all(apps.map(async ({name, app}) => {
     const prefix = `[${name}]`.padEnd(10)
 
     console.log(`${prefix} ⏳ Attempting to claim reward...`)
@@ -50,11 +55,26 @@ async function getDailyRewards() {
       } else {
         console.log(`${prefix} ⚠️  Claim status: ${status}`)
       }
+      console.log('') // Add spacing between apps
+      return { game: name, success: true, status, totalSignDays: info?.total_sign_day ?? null }
     } catch (e) {
       console.log(`${prefix} ❌ Error: ${e.message}`)
+      console.log('') // Add spacing between apps
+      return { game: name, success: false, error: e.message }
     }
-    console.log('') // Add spacing between apps
   }))
+
+  const allSucceeded = results.every(r => r.success)
+
+  if (axiom) {
+    axiom.ingest('hoyo-claimer', [{
+      _time: new Date().toISOString(),
+      level: allSucceeded ? 'info' : 'error',
+      success: allSucceeded,
+      results,
+    }])
+    await axiom.flush()
+  }
 
   console.log(`[${formatTimestamp()}] ✨ Daily rewards collection completed\n`)
 }

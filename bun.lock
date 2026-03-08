@@ -1,0 +1,28 @@
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "hoyo-daily-claimer",
+      "dependencies": {
+        "@axiomhq/js": "^1.4.0",
+        "dotenv": "^16.4.7",
+        "hoyoapi": "^1.2.0",
+        "node-cron": "^3.0.3",
+      },
+    },
+  },
+  "packages": {
+    "@axiomhq/js": ["@axiomhq/js@1.4.0", "", { "dependencies": { "fetch-retry": "6.0.0" } }, "sha512-wC5x1ud/QJMstrjpicATkyY8+ZVWEl4WlXMtA5EZf7hkj0+b191yv4yynLxLEfr/MveXora9m6CWdJq4DsbcAg=="],
+
+    "dotenv": ["dotenv@16.4.7", "", {}, "sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ=="],
+
+    "fetch-retry": ["fetch-retry@6.0.0", "", {}, "sha512-BUFj1aMubgib37I3v4q78fYo63Po7t4HUPTpQ6/QE6yK6cIQrP+W43FYToeTEyg5m2Y7eFUtijUuAv/PDlWuag=="],
+
+    "hoyoapi": ["hoyoapi@1.2.0", "", {}, "sha512-mjErQ9TELN+XV2wLkqaf37thQX9vQTfjPFDeGRKjU84G4vT6Ufjz9sgYIB9aK5PZebfLIhAnDO4yRLLOqAr0lQ=="],
+
+    "node-cron": ["node-cron@3.0.3", "", { "dependencies": { "uuid": "8.3.2" } }, "sha512-dOal67//nohNgYWb+nWmg5dkFdIwDm8EpeGYMekPMrngV3637lqnX0lbUcCtgibHTz6SEz7DAIjKvKDFYCnO1A=="],
+
+    "uuid": ["uuid@8.3.2", "", { "bin": { "uuid": "dist/bin/uuid" } }, "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg=="],
+  }
+}

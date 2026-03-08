@@ -1,18 +1,15 @@
-FROM node:22.13-alpine
+FROM oven/bun:alpine
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
-
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json bun.lock ./
 
 # Install dependencies
-RUN pnpm install
+RUN bun install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
 # Run the script
-CMD pnpm collect:now
+CMD ["bun", "run", "collect:now"]

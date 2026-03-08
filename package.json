@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "collect": "node index.mjs",
-    "collect:now": "GET_REWARDS_NOW=true pnpm collect"
+    "collect": "bun index.mjs",
+    "collect:now": "GET_REWARDS_NOW=true bun run collect"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@axiomhq/js": "^1.4.0",
     "dotenv": "^16.4.7",
     "hoyoapi": "^1.2.0",
     "node-cron": "^3.0.3"
