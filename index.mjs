@@ -1,88 +1,53 @@
-import {HonkaiStarRail, GenshinImpact, HonkaiImpact, LanguageEnum} from 'hoyoapi'
-import 'dotenv/config'
-import {schedule} from "node-cron";
-import {Axiom} from "@axiomhq/js";
+import 'dotenv/config';
+import { schedule } from 'node-cron';
+import { Axiom } from '@axiomhq/js';
+import { games, claimDailyReward } from './daily.mjs';
 
-const axiom = process.env.AXIOM_TOKEN
-  ? new Axiom({ token: process.env.AXIOM_TOKEN })
-  : null;
-
-const cookie = process.env.COOKIE
-const hsr = new HonkaiStarRail({
-  cookie,
-  lang: LanguageEnum.ENGLISH, // optional
-  uid: process.env.HSR_UID,
-})
-const genshin = new GenshinImpact({
-  cookie,
-  lang: LanguageEnum.ENGLISH,
-  uid: process.env.GENSHIN_UID
-})
-const hi3 = new HonkaiImpact({
-  cookie,
-  lang: LanguageEnum.ENGLISH,
-  uid: process.env.HI3_UID
-})
-
-const apps = [{name: 'hsr', app: hsr}, {name: 'genshin', app: genshin}, {name: 'hi3', app: hi3}]
-
-function formatTimestamp () {
-  const now = new Date()
-  return now.toLocaleString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  }).replace(/(\d+)\/(\d+)\/(\d+)/, '$3/$1/$2')
+const cookie = process.env.COOKIE;
+if (!cookie?.trim()) {
+  console.error('COOKIE is required. Set it in the environment or .env.');
+  process.exit(1);
 }
 
-async function getDailyRewards() {
-  console.log(`\n[${formatTimestamp()}] 🎯 Starting daily rewards collection...\n`)
+const axiom = process.env.AXIOM_TOKEN ? new Axiom({ token: process.env.AXIOM_TOKEN }) : null;
+let running = false;
 
-  const results = await Promise.all(apps.map(async ({name, app}) => {
-    const prefix = `[${name}]`.padEnd(10)
-
-    console.log(`${prefix} ⏳ Attempting to claim reward...`)
-    try {
-      const dailyClaim = await app.daily.claim()
-      const {info, status} = dailyClaim
-
-      if (status === 'OK') {
-        console.log(`${prefix} ✅ Successfully claimed reward`)
-        console.log(`${prefix} 📊 Total rewards this month: ${info.total_sign_day}`)
-      } else {
-        console.log(`${prefix} ⚠️  Claim status: ${status}`)
-      }
-      console.log('') // Add spacing between apps
-      return { game: name, success: true, status, totalSignDays: info?.total_sign_day ?? null }
-    } catch (e) {
-      console.log(`${prefix} ❌ Error: ${e.message}`)
-      console.log('') // Add spacing between apps
-      return { game: name, success: false, error: e.message }
+async function collectRewards() {
+  if (running) return;
+  running = true;
+  try {
+    console.log(`[${new Date().toISOString()}] Collecting daily rewards`);
+    const results = await Promise.all(games.map(game => claimDailyReward(game, { cookie })));
+    for (const result of results) {
+      console.log(result.success
+        ? `[${result.game}] ${result.status}; total check-ins this month: ${result.totalSignDays}`
+        : `[${result.game}] ERROR: ${result.error}`);
     }
-  }))
-
-  const allSucceeded = results.every(r => r.success)
-
-  if (axiom) {
-    axiom.ingest('hoyo-claimer', [{
-      _time: new Date().toISOString(),
-      level: allSucceeded ? 'info' : 'error',
-      success: allSucceeded,
-      results,
-    }])
-    await axiom.flush()
+    const success = results.every(result => result.success);
+    if (axiom) {
+      try {
+        axiom.ingest('hoyo-claimer', [{
+          _time: new Date().toISOString(),
+          level: success ? 'info' : 'error',
+          success,
+          results,
+        }]);
+        await axiom.flush();
+      } catch {
+        console.error('Axiom reporting failed');
+        return false;
+      }
+    }
+    return success;
+  } finally {
+    running = false;
   }
-
-  console.log(`[${formatTimestamp()}] ✨ Daily rewards collection completed\n`)
 }
 
-
-if (process.env.GET_REWARDS_NOW === 'true') {
-    void getDailyRewards()
+if (process.argv.includes('--once')) {
+  process.exitCode = await collectRewards() ? 0 : 1;
+} else {
+  schedule('0 11 * * *', collectRewards);
+  console.log('Daily collection scheduled for 11:00 in the process timezone.');
+  if (process.env.GET_REWARDS_NOW === 'true') await collectRewards();
 }
-
-schedule('0 11 * * *', getDailyRewards)
-
