@@ -17,6 +17,8 @@ Authentication uses the `Cookie` header. The deployment retains legacy cookies a
 
 HTTP 200 does not establish API success. The collector accepts API return codes `0` and, for claims only, `-5003`. It rejects risk challenges and confirms `is_sign` through `/info` after a claim.
 
-The repeatable check is `bun run verify --claim`, using the same API module as the collector. Omit `--claim` for read-only verification.
+The repeatable check is `bun run verify --claim`, using the same Effect service as the collector. Omit `--claim` for read-only verification.
 
 Endpoint references: [genshin.py routes](https://github.com/seriaati/genshin.py/blob/master/genshin/client/routes.py), [genshin.py request headers](https://github.com/seriaati/genshin.py/blob/master/genshin/client/components/daily.py), and [NickAwrist ZZZ check-in](https://github.com/NickAwrist/Dailycheckin_Bot/blob/main/src/games/zenless_zone_zero/checkin_zenless.ts). These are community implementations of HoYoLAB website endpoints, not a supported public developer API contract.
+
+The Effect 4.0.6 migration was also verified locally with the same cookie on 2026-10-22. All 12 checks passed, and all four claims returned `ALREADY_CLAIMED`. Each HTTP request has its own scope and a 25-second Effect deadline, so interruption or timeout cancels the request and response body.

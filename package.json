@@ -2,20 +2,28 @@
   "name": "hoyo-daily-claimer",
   "version": "1.0.0",
   "description": "Daily HoYoLAB check-in for Genshin Impact, Honkai: Star Rail, Honkai Impact 3rd, and Zenless Zone Zero.",
-  "main": "index.mjs",
+  "main": "index.ts",
   "scripts": {
-    "test": "bun test daily.test.mjs",
-    "collect": "bun index.mjs",
+    "test": "bun run --bun vitest run",
+    "collect": "bun index.ts",
     "collect:now": "GET_REWARDS_NOW=true bun run collect",
-    "collect:once": "bun index.mjs --once",
-    "verify": "bun verify.mjs"
+    "collect:once": "bun index.ts --once",
+    "verify": "bun verify.ts",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@axiomhq/js": "^1.4.0",
-    "dotenv": "^16.4.7",
-    "node-cron": "^3.0.3"
-  }
+    "@effect/platform-bun": "4.0.6",
+    "effect": "4.0.6"
+  },
+  "devDependencies": {
+    "@effect/vitest": "4.0.6",
+    "@types/bun": "^1.4.3",
+    "typescript": "^7.0.2",
+    "vitest": "^5"
+  },
+  "type": "module"
 }
